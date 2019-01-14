@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<search xmlns="http://www.digitalchina.com/schema/search"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.digitalchina.com/schema/search azalea.xsd">
+	
+	<nodes name="yt-application">
+		<node host="10.21.236.133"/>
+		<node host="10.21.236.134"/>
+		<node host="10.21.236.138"/>
+	</nodes>
+	
+	<indices>
+		<index name="bicycle" debug="false">
+			<settings>
+				<map name="index">
+					<integer name="number_of_shards" value="4"/>
+					<integer name="number_of_replicas" value="1"/>
+				</map>
+			</settings>
+			<mappings>
+				<type name="meta" id="id" snapshot="true" class="com.digitalchina.app.bicycle.vo.BicycleVo">
+					<string name="id" index="no"/>
+					<string name="name" analyzer="ik_max_word" search_analyzer="ik_max_word" boost="4"/>
+					<geo_point name="location" analyzer="ik_max_word" search_analyzer="ik_max_word" boost="4"/>
+					<string name="pcCount" index="no"/>
+					<long name="createTime" index="not_analyzed"/>
+				</type>
+			</mappings>
+		</index>
+	</indices>
+
+</search>

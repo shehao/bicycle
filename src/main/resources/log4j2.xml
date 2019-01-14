@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="error" strict="true">
+	<Properties>
+		<Property name="level">ERROR</Property>
+		<Property name="layout"><![CDATA[ [%-5level] <%date{yyyy-MM-dd HH:mm:ss,SSS}> #%logger(%thread)>> %method(%line)# - %message%n ]]></Property>
+		<Property name="runtimeFn">/tmp/logs/bicycle/app.log</Property>
+		<Property name="runtimeFp">/tmp/logs/bicycle/$${date:yyyy}/$${date:MM}/app-%d{dd}-%i.log.gz</Property>
+	</Properties>
+	<Appenders>
+		<Console name="STDOUT">
+			<PatternLayout pattern="${layout}"/>
+		</Console>
+		<RollingRandomAccessFile name="RUNTIME_DAYOUT" fileName="${runtimeFn}" filePattern="${runtimeFp}">
+			<PatternLayout pattern="${layout}"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="24" modulate="true"/>
+				<SizeBasedTriggeringPolicy size="100MB"/>
+			</Policies>
+			<DefaultRolloverStrategy compressionLevel="9"/>
+		</RollingRandomAccessFile>
+	</Appenders>
+	<Loggers>
+		<AsyncLogger name="org.springframework" level="${level}" />
+		<AsyncLogger name="druid.sql" level="${level}" />
+		<AsyncLogger name="org.apache.http" level="${level}" />
+		<AsyncLogger name="net.rubyeye.xmemcached" level="${level}" />
+		<AsyncLogger name="org.mybatis.spring" level="${level}" />
+		<AsyncLogger name="com.mongodb" level="${level}" />
+		<AsyncLogger name="com.digitalchina" level="${level}" />
+		<Root level="WARN">
+			<AppenderRef ref="STDOUT"/>
+			<AppenderRef ref="RUNTIME_DAYOUT">
+				<ThresholdFilter level="${level}" onMatch="ACCEPT" onMismatch="DENY"/>
+			</AppenderRef>
+		</Root>
+	</Loggers>
+</Configuration>

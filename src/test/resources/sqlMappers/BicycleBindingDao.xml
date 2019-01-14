@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="com.digitalchina.app.bicycle.dao.BicycleBindingDao">
+
+	<insert id="insertVo" parameterType="bicycleBinding">
+		insert into bicycle_binding_rs(userId, cardNum, idCard, bindingTime)
+		values(#{userId}, #{cardNum}, #{idCard}, #{bindingTime})
+	</insert>
+	
+	<delete id="deleteVo" parameterType="bicycleBinding">
+		delete from bicycle_binding_rs where userId=#{userId} and cardNum=#{cardNum}
+	</delete>
+	
+	<update id="updateVo" parameterType="bicycleBinding">
+		<!-- do no thing -->
+	</update>
+	
+	<select id="selectVo" parameterType="bicycleBinding" resultType="bicycleBinding">
+		select cardNum, idCard, bindingTime from bicycle_binding_rs where userId=#{userId} and cardNum=#{cardNum}
+	</select>
+	
+	<select id="selectVos" resultType="bicycleBinding">
+		select cardNum, idCard, bindingTime from bicycle_binding_rs where userId=#{userId} order by bindingTime desc
+	</select>
+	
+	<select id="selectCount" resultType="long">
+		<!-- do no thing -->
+	</select>
+	
+</mapper>

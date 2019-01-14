@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- ===============================业务数据源==================================== -->
+	
+	<!-- 配置数据源 -->
+	<bean id="businessDataSource" class="com.alibaba.druid.pool.DruidDataSource" 
+		init-method="init" 
+		destroy-method="close"
+		p:name="inner_business"
+		p:url="#{configproperties['mysql.url']}"
+		p:username="#{configproperties['mysql.username']}"
+		p:password="#{configproperties['mysql.password']}"
+		p:validationQuery="SELECT 1"
+		p:testOnBorrow="false"
+		p:testOnReturn="false"
+		p:testWhileIdle="true"
+		p:filters="log4j"
+		p:timeBetweenEvictionRunsMillis="30000"
+		p:minEvictableIdleTimeMillis="60000"
+		p:poolPreparedStatements="false"
+		p:maxOpenPreparedStatements="-1"
+		p:initialSize="#{configproperties['mysql.connectionInitalSize']}"
+		p:minIdle="#{configproperties['mysql.connectionMinIdleSize']}"
+		p:maxActive="#{configproperties['mysql.connectionMaxActiveSize']}"
+		p:removeAbandoned="true"
+		p:removeAbandonedTimeoutMillis="10000"
+		p:maxWait="5000"
+		p:keepAlive="true"/>
+		
+	<!-- ===============================业务数据源==================================== -->
+	
+</beans>

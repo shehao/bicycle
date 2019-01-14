@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.digitalchina.com/schema/search" xmlns="http://www.digitalchina.com/schema/search"
+	elementFormDefault="qualified">
+
+	<xsd:element name="search">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="nodes" minOccurs="1" maxOccurs="1" />
+				<xsd:element ref="indices" minOccurs="0" maxOccurs="1" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="nodes">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="node" minOccurs="0" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:attribute name="host" default="127.0.0.1" />
+						<xsd:attribute name="port" default="9300" />
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="name" />
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="indices">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="index" minOccurs="1" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:element ref="settings" minOccurs="0" maxOccurs="1" />
+							<xsd:element ref="mappings" minOccurs="1" maxOccurs="1" />
+						</xsd:sequence>
+						<xsd:attribute name="name" use="required" type="xsd:string" />
+						<xsd:attribute name="debug" type="xsd:boolean"
+							default="false" />
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="settings">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:group ref="settingsProperties" minOccurs="1"
+					maxOccurs="unbounded" />
+				<xsd:element name="analysis" minOccurs="0" maxOccurs="1">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:sequence minOccurs="1" maxOccurs="1">
+								<xsd:element name="char_filter" minOccurs="0"
+									maxOccurs="1">
+									<xsd:complexType>
+										<xsd:sequence>
+											<xsd:group ref="settingsProperties" minOccurs="1"
+												maxOccurs="unbounded" />
+										</xsd:sequence>
+									</xsd:complexType>
+								</xsd:element>
+								<xsd:element name="tokenizer" minOccurs="0"
+									maxOccurs="1">
+									<xsd:complexType>
+										<xsd:sequence>
+											<xsd:group ref="settingsProperties" minOccurs="1"
+												maxOccurs="unbounded" />
+										</xsd:sequence>
+									</xsd:complexType>
+								</xsd:element>
+								<xsd:element name="filter" minOccurs="0" maxOccurs="1">
+									<xsd:complexType>
+										<xsd:sequence>
+											<xsd:group ref="settingsProperties" minOccurs="1"
+												maxOccurs="unbounded" />
+										</xsd:sequence>
+									</xsd:complexType>
+								</xsd:element>
+								<xsd:element name="analyzer" minOccurs="1"
+									maxOccurs="1">
+									<xsd:complexType>
+										<xsd:sequence>
+											<xsd:group ref="settingsProperties" minOccurs="1"
+												maxOccurs="unbounded" />
+										</xsd:sequence>
+									</xsd:complexType>
+								</xsd:element>
+							</xsd:sequence>
+						</xsd:sequence>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<!-- Settings 的类型 -->
+	<xsd:group name="settingsProperties">
+		<xsd:choice>
+			<xsd:element name="integer">
+				<xsd:complexType>
+					<xsd:attribute name="name" type="xsd:string" use="required" />
+					<xsd:attribute name="value" type="xsd:integer" use="required" />
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="double">
+				<xsd:complexType>
+					<xsd:attribute name="name" type="xsd:string" use="required" />
+					<xsd:attribute name="value" type="xsd:double" use="required" />
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="boolean">
+				<xsd:complexType>
+					<xsd:attribute name="name" type="xsd:string" use="required" />
+					<xsd:attribute name="value" type="xsd:boolean" use="required" />
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="map" />
+			<xsd:element ref="array" />
+		</xsd:choice>
+	</xsd:group>
+	<xsd:element name="map">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:choice minOccurs="1" maxOccurs="unbounded">
+					<xsd:group ref="settingsProperties" />
+				</xsd:choice>
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="array">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="value" minOccurs="1" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:simpleContent>
+							<xsd:extension base="xsd:string" />
+						</xsd:simpleContent>
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Settings 的类型 -->
+
+	<xsd:element name="mappings">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="type" minOccurs="1" maxOccurs="unbounded">
+					<xsd:complexType>
+						<xsd:sequence>
+							<xsd:group ref="mappingsTypeProperties" minOccurs="0"
+								maxOccurs="unbounded" />
+						</xsd:sequence>
+						<xsd:attribute name="name" use="required" type="xsd:string" />
+						<xsd:attribute name="class" type="xsd:string" />
+						<xsd:attribute name="id" type="xsd:string" default="id" />
+						<xsd:attribute name="dynamic" type="enumDynamic"
+							default="false" />
+						<xsd:attribute name="snapshot" type="xsd:boolean"
+							default="false" />
+						<xsd:attribute name="idAutoGet" type="xsd:boolean"
+							default="false" />
+						<xsd:attribute name="all" type="enumUseStatus"
+							default="disabled" />
+						<xsd:attribute name="source" type="enumUseStatus"
+							default="enabled" />
+					</xsd:complexType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	<!-- Mapping 的类型 -->
+	<xsd:group name="mappingsTypeProperties">
+		<xsd:choice>
+			<xsd:element name="integer">
+				<xsd:complexType>
+					<xsd:attribute name="name" type="xsd:string" use="required" />
+					<xsd:attribute name="store" type="xsd:boolean"
+						default="false" />
+					<xsd:attribute name="analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="search_analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="include_in_all" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="boost" type="xsd:integer"
+						default="1" />
+					<xsd:attribute name="enabled" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="index" type="enumIndex" default="analyzed" />
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="long">
+				<xsd:complexType>
+					<xsd:attribute name="name" type="xsd:string" use="required" />
+					<xsd:attribute name="store" type="xsd:boolean"
+						default="false" />
+					<xsd:attribute name="analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="search_analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="include_in_all" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="boost" type="xsd:integer"
+						default="1" />
+					<xsd:attribute name="enabled" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="index" type="enumIndex" default="analyzed" />
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="double">
+				<xsd:complexType>
+					<xsd:attribute name="name" type="xsd:string" use="required" />
+					<xsd:attribute name="store" type="xsd:boolean"
+						default="false" />
+					<xsd:attribute name="analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="search_analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="include_in_all" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="boost" type="xsd:integer"
+						default="1" />
+					<xsd:attribute name="enabled" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="index" type="enumIndex" default="analyzed" />
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="date">
+				<xsd:complexType>
+					<xsd:attribute name="name" type="xsd:string" use="required" />
+					<xsd:attribute name="store" type="xsd:boolean"
+						default="false" />
+					<xsd:attribute name="analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="search_analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="include_in_all" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="boost" type="xsd:integer"
+						default="1" />
+					<xsd:attribute name="enabled" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="index" type="enumIndex" default="analyzed" />
+					<xsd:attribute name="format" type="xsd:string"
+						default="yyyy-MM-dd" />
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="boolean">
+				<xsd:complexType>
+					<xsd:attribute name="name" type="xsd:string" use="required" />
+					<xsd:attribute name="store" type="xsd:boolean"
+						default="false" />
+					<xsd:attribute name="analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="search_analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="include_in_all" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="boost" type="xsd:integer"
+						default="1" />
+					<xsd:attribute name="enabled" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="index" type="enumIndex" default="not_analyzed" />
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="string">
+				<xsd:complexType>
+					<xsd:attribute name="name" type="xsd:string" use="required" />
+					<xsd:attribute name="store" type="xsd:boolean"
+						default="false" />
+					<xsd:attribute name="term_vector" type="enumTermVector"
+						default="no" />
+					<xsd:attribute name="analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="search_analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="include_in_all" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="boost" type="xsd:integer"
+						default="1" />
+					<xsd:attribute name="enabled" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="index" type="enumIndex" default="analyzed" />
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element name="geo_point">
+				<xsd:complexType>
+					<xsd:attribute name="name" type="xsd:string" use="required" />
+					<xsd:attribute name="geohash" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="geohash_prefix" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="lat_lon" type="xsd:boolean"
+						default="true" />
+					<xsd:attribute name="geohash_precision" type="xsd:string"
+						default="12" />
+					<xsd:attribute name="analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="search_analyzer" type="xsd:string"
+						default="standard" />
+					<xsd:attribute name="boost" type="xsd:integer"
+						default="1" />
+				</xsd:complexType>
+			</xsd:element>
+			<xsd:element ref="object" />
+			<xsd:element ref="nested" />
+		</xsd:choice>
+	</xsd:group>
+	<xsd:element name="object">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:group ref="mappingsTypeProperties" minOccurs="1"
+					maxOccurs="unbounded" />
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="dynamic" type="enumDynamic"
+				default="false" />
+			<xsd:attribute name="store" type="xsd:boolean" default="false" />
+			<xsd:attribute name="include_in_all" type="xsd:boolean"
+				default="true" />
+			<xsd:attribute name="enabled" type="xsd:boolean"
+				default="true" />
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="nested">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required" />
+			<xsd:attribute name="store" type="xsd:boolean" default="false" />
+			<xsd:attribute name="include_in_all" type="xsd:boolean"
+				default="true" />
+			<xsd:attribute name="enabled" type="xsd:boolean"
+				default="true" />
+		</xsd:complexType>
+	</xsd:element>
+	<!-- Mapping 的类型 -->
+
+	<!-- data enumeration -->
+	<xsd:simpleType name="enumIndex">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="no" />
+			<xsd:enumeration value="not_analyzed" />
+			<xsd:enumeration value="analyzed" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="enumDynamic">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="true" />
+			<xsd:enumeration value="false" />
+			<xsd:enumeration value="strict" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="enumType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="string" />
+			<xsd:enumeration value="byte" />
+			<xsd:enumeration value="short" />
+			<xsd:enumeration value="integer" />
+			<xsd:enumeration value="long" />
+			<xsd:enumeration value="float" />
+			<xsd:enumeration value="double" />
+			<xsd:enumeration value="boolean" />
+			<xsd:enumeration value="date" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="enumTermVector">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="no" />
+			<xsd:enumeration value="yes" />
+			<xsd:enumeration value="with_positions" />
+			<xsd:enumeration value="with_offsets" />
+			<xsd:enumeration value="with_positions_offsets" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="enumUseStatus">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="disabled" />
+			<xsd:enumeration value="enabled" />
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- data enumeration -->
+
+</xsd:schema>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Quartz 要做用的business -->
+	<bean id="bicyclePointStorage" class="com.digitalchina.app.bicycle.business.BicyclePointStorage" />
+	<bean id="bicyclePointInfoL2Cache" class="com.digitalchina.app.bicycle.business.BicycleEmptyCountL2Cache" />
+	
+	<!-- Quartz 方法切入器，对上面要做的business做一个切入 -->
+	<bean id="bicyclePointStorageJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+		p:targetObject-ref="bicyclePointStorage" 
+		p:targetMethod="initDatas" />
+	<bean id="bicyclePointInfoL2CacheJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"
+		p:targetObject-ref="bicyclePointInfoL2Cache" 
+		p:targetMethod="initDatas" />
+		
+	<!-- Quartz 触发器 -->
+	<bean id="bicyclePointStorageTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		p:name="bicycle_point_storage"
+		p:group="smyt"
+		p:jobDetail-ref="bicyclePointStorageJobDetail" 
+		p:cronExpression="0 0 1 * * ?" /><!-- 每天凌晨1点触发一次 -->
+	<bean id="bicyclePointInfoL2CacheTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean"
+		p:name="bicycle_point_info"
+		p:group="smyt"
+		p:jobDetail-ref="bicyclePointInfoL2CacheJobDetail" 
+		p:cronExpression="0 0/10 * * * ?" /><!-- 全天候，每隔10分钟触发一次  -->
+		
+	<!-- Quartz 调度工厂 -->
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="globalTriggerListeners">
+			<array>
+				<bean
+					class="com.digitalchina.web.sunflower.quartz.listener.SunflowerTriggerListener"> <!-- Quartz Zookeeper Trigger 监听器 -->
+					<property name="zkCfg">
+						<bean class="com.digitalchina.web.sunflower.ZookeeperCfg"
+							p:connectionUrls="${zk.url}" />
+					</property>
+				</bean>
+			</array>
+		</property>
+		<property name="triggers">
+			<list>
+				<ref bean="bicyclePointStorageTrigger" />
+				<ref bean="bicyclePointInfoL2CacheTrigger"/>
+			</list>
+		</property>
+	</bean>
+	
+</beans>

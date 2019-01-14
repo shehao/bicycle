@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE tran-config SYSTEM "tran.dtd" -->
+<tran-config>
+
+	<tran name="CW0001" operation="获取自行车点信息"
+		servicePath="com.digitalchina.app.bicycle.service.BicycleService.locationFindBicycles"
+		access="public" />
+		
+	<tran name="CW0011" operation="当前用户是否已经绑定了自行车的实体卡"
+		servicePath="com.digitalchina.app.bicycle.service.BicycleBusinessService.findBindedCardOrNot"
+		access="protected" />
+	<tran name="CW0012" operation="查找当前用户所有的卡绑定信息"
+		servicePath="com.digitalchina.app.bicycle.service.BicycleBusinessService.findBindedCards"
+		access="protected" />
+	<tran name="CW0013" operation="解绑卡"
+		servicePath="com.digitalchina.app.bicycle.service.BicycleBusinessService.unbindCard"
+		access="protected" />
+	<tran name="CW0014" operation="绑定卡"
+		servicePath="com.digitalchina.app.bicycle.service.BicycleBusinessService.bindCard"
+		access="protected" />
+	<tran name="CW0015" operation="挂失卡"
+		servicePath="com.digitalchina.app.bicycle.service.BicycleBusinessService.reportBindedCardLoss"
+		access="protected" />
+	<tran name="CW0016" operation="解挂卡"
+		servicePath="com.digitalchina.app.bicycle.service.BicycleBusinessService.unlockReportedLossBindedCard"
+		access="protected" />
+	<tran name="CW0017" operation="查询个人信息"
+		servicePath="com.digitalchina.app.bicycle.service.BicycleBusinessService.findBindedCardPersonalInfo"
+		access="protected" />
+	<tran name="CW0018" operation="查询车卡的借还记录信息"
+		servicePath="com.digitalchina.app.bicycle.service.BicycleBusinessService.findBindedCardBorrowStillRecords"
+		access="protected" />
+	<tran name="CW0019" operation="新的查询车卡的借还记录信息"
+		servicePath="com.digitalchina.app.bicycle.service.BicycleBusinessService.findNewBindedCardBorrowStillRecords"
+		access="protected" />
+</tran-config>

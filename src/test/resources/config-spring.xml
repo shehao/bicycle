@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd
+		http://www.springframework.org/schema/aop 
+		http://www.springframework.org/schema/aop/spring-aop.xsd">
+	
+	<!-- 注解扫描，容器入库 -->
+	<context:component-scan base-package="com.digitalchina.app">
+		<context:exclude-filter expression="org.springframework.stereotype.Controller"
+			type="annotation" />
+	</context:component-scan> 
+	<!-- 对配置切面做注入 -->
+	<aop:aspectj-autoproxy />
+	
+	<bean id="configproperties"
+		class="com.digitalchina.web.wattle.spring.beans.factory.config.PropertiesFactoryBean">
+		<property name="locations">
+			<list>
+				<value>classpath:system.properties</value>
+			</list>
+		</property>
+	</bean>
+	<bean class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer"
+		p:properties-ref="configproperties"/>
+
+	<!-- es -->
+	<bean class="com.digitalchina.web.azalea.SessionFactory"
+		p:location="classpath:/config-search.xml" />
+	
+	<!-- mysql -->
+	<bean id="businessSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+		p:dataSource-ref="businessDataSource" 
+		p:configLocation="classpath:/config-mybatis.xml"/>
+	<bean  class="org.mybatis.spring.mapper.MapperScannerConfigurer"
+		p:basePackage="com.digitalchina.app.bicycle" 
+		p:markerInterface="com.digitalchina.web.wattle.dao.IRepository"
+		p:sqlSessionFactory-ref="businessSessionFactory" />
+	<bean id="bussinessTransactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+		p:dataSource-ref="businessDataSource" />
+	<tx:advice id="businessTransactionAdvice" transaction-manager="bussinessTransactionManager">
+		<tx:attributes>
+			<tx:method name="do*" propagation="REQUIRED" rollback-for="Exception" />
+			<tx:method name="find*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>
+		<aop:advisor advice-ref="businessTransactionAdvice"
+			pointcut="execution(* com.digitalchina.app.bicycle.business..*Manager.*(..))" />
+	</aop:config>
+	
+</beans>

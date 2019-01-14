@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+
+	<context:component-scan base-package="com.digitalchina.app" use-default-filters="false">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+	
+	<mvc:default-servlet-handler />
+	
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/plain;charset=UTF-8</value>
+					</list>
+				</property>
+			</bean>
+			<bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+			<bean class="org.springframework.http.converter.BufferedImageHttpMessageConverter" />
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper">
+					<bean class="com.digitalchina.web.wattle.spring.http.converter.ObjectMapper2MappingJackson" />
+				</property>
+			</bean>
+			<bean
+				class="org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter" />
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<bean
+		class="com.digitalchina.cptl.remote.controller.CspRemoteServiceController">
+		<property name="interceptors">
+			<array>
+				<bean class="com.digitalchina.web.common.user.integrate.dfh.spring.YantianUserCenterInterceptor" 
+					p:usercenterApiUrl="#{configproperties['yantian.user.info.url']}"/>
+			</array>
+		</property>
+	</bean>
+	
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:prefix="/"
+		p:suffix=".jsp" 
+		p:viewClass="org.springframework.web.servlet.view.JstlView"/>
+	
+	<bean name="handlerExceptionResolver" class="com.digitalchina.web.wattle.spring.web.servlet.handler.MappingExceptionResolver" 
+		p:defaultErrorView="/error.jsp"
+		p:exceptionAttribute="error">
+		<property name="exceptionMappings">
+			<map>
+				<entry key="com.digitalchina.web.common.user.api.exception.UserNotFoundException">
+					<value>{"httpCode":401, "statusCode":"444444", "msg":"用户不存在"}</value>
+				</entry>
+				<entry key="com.digitalchina.web.common.user.api.exception.UserWithoutLoginException">
+					<value>{"httpCode":401, "statusCode":"444444", "msg":"用户未登录或登录超时"}</value>
+				</entry>
+				<entry key="org.springframework.web.bind.ServletRequestBindingException">
+					<value>{"httpCode":404, "statusCode":"999999", "msg":"接口参数异常"}</value>
+				</entry>
+				<entry key="java.lang.Exception">
+					<value>{"httpCode":404, "statusCode":"999999", "msg":"系统繁忙，请稍后重试"}</value>
+				</entry>
+				<entry key="java.lang.Throwable">
+					<value>{"httpCode":404, "statusCode":"999999", "msg":"系统繁忙，请稍后重试"}</value>
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+</beans>
